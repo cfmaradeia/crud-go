@@ -1,5 +1,3 @@
-version: '3.1'
-
 services:
   crud-go-db:
     image: postgres
@@ -15,12 +13,16 @@ services:
       retries: 10
     ports:
       - "5432:5432"
+    networks:
+      - crud-go-net
 
   crud-go-adminer:
     image: adminer
     restart: always
     ports:
       - "8080:8080"
+    networks:
+      - crud-go-net
   
   crud-go-migration:
     build:
@@ -29,10 +31,16 @@ services:
     volumes:
       - "./migrations/config/:/liquibase/migrations/"
     environment:
-      - LIQUIBASE_COMMAND_URL=jdbc:postgresql://database:5432/crudgo-db
-      - LIQUIBASE_COMMAND_USERNAME=user
-      - LIQUIBASE_COMMAND_PASSWORD=crudgo
-      - MIGRATION_COMMAND=update
+      LIQUIBASE_COMMAND_URL: jdbc:postgresql://localhost:5432/crudgo-db
+      LIQUIBASE_COMMAND_USERNAME: user
+      LIQUIBASE_COMMAND_PASSWORD: crudgo
+      MIGRATION_COMMAND: update
     depends_on:
       crud-go-db:
         condition: service_healthy
+    networks:
+      - crud-go-net
+
+networks:
+  crud-go-net:
+    driver: bridge
