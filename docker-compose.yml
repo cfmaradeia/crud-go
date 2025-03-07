@@ -1,0 +1,38 @@
+version: '3.1'
+
+services:
+  crud-go-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: crudgo
+      POSTGRES_USER: user
+      POSTGRES_DB: crudgo-db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d crudgo-db"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+    ports:
+      - "5432:5432"
+
+  crud-go-adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+  
+  crud-go-migration:
+    build:
+      context: .
+      dockerfile: migrations/docker/Dockerfile
+    volumes:
+      - "./migrations/config/:/liquibase/migrations/"
+    environment:
+      - LIQUIBASE_COMMAND_URL=jdbc:postgresql://database:5432/crudgo-db
+      - LIQUIBASE_COMMAND_USERNAME=user
+      - LIQUIBASE_COMMAND_PASSWORD=crudgo
+      - MIGRATION_COMMAND=update
+    depends_on:
+      crud-go-db:
+        condition: service_healthy
