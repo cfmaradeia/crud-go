@@ -1,5 +1,6 @@
 services:
   crud-go-db:
+    container_name: crud-go-db
     image: postgres
     restart: always
     environment:
@@ -15,23 +16,16 @@ services:
       - "5432:5432"
     networks:
       - crud-go-net
-
-  crud-go-adminer:
-    image: adminer
-    restart: always
-    ports:
-      - "8080:8080"
-    networks:
-      - crud-go-net
   
   crud-go-migration:
+    container_name: crud-go-migration
     build:
       context: .
       dockerfile: migrations/docker/Dockerfile
     volumes:
       - "./migrations/config/:/liquibase/migrations/"
     environment:
-      LIQUIBASE_COMMAND_URL: jdbc:postgresql://localhost:5432/crudgo-db
+      LIQUIBASE_COMMAND_URL: jdbc:postgresql://crud-go-db:5432/crudgo-db
       LIQUIBASE_COMMAND_USERNAME: user
       LIQUIBASE_COMMAND_PASSWORD: crudgo
       MIGRATION_COMMAND: update
