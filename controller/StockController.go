@@ -36,7 +36,7 @@ func (c *StockController) findByID(ctx *gin.Context) {
 
 	idString := ctx.Param("id")
 
-	id, err := strconv.ParseUint(idString, 10, 64)
+	id, err := strconv.ParseInt(idString, 10, 64)
 
 	if err != nil {
 		ctx.JSON(
@@ -46,7 +46,7 @@ func (c *StockController) findByID(ctx *gin.Context) {
 		return
 	}
 
-	stock, err := c.service.FindById(id)
+	stock, err := c.service.FindById(int(id))
 	if err != nil {
 		ctx.JSON(
 			http.StatusBadRequest,
@@ -70,7 +70,7 @@ func (c *StockController) saveStock(ctx *gin.Context) {
 		return
 	}
 
-	id, err := c.service.SaveStock(*stock)
+	stockSaved, err := c.service.SaveStock(*stock)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
@@ -79,5 +79,5 @@ func (c *StockController) saveStock(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"id": id})
+	ctx.JSON(http.StatusCreated, stockSaved)
 }

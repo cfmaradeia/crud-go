@@ -1,6 +1,7 @@
--- public.stocks definição
+DROP TABLE IF EXISTS stocks;
 
 CREATE TABLE stocks (
-	id uuid NOT NULL,
-	CONSTRAINT stocks_pk PRIMARY KEY (id)
+	id  SERIAL PRIMARY KEY,
+	ticker text NULL,
+	price numeric NULL
 );

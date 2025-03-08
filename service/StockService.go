@@ -16,7 +16,7 @@ func NewStockService(db *gorm.DB) *StockService {
 	}
 }
 
-func (s *StockService) FindById(id uint64) (model.Stock, error) {
+func (s *StockService) FindById(id int) (model.Stock, error) {
 	stock := new(model.Stock)
 	resp := s.db.First(&stock, id)
 
@@ -37,7 +37,7 @@ func (s *StockService) SaveStock(stock model.Stock) (model.Stock, error) {
 	return stock, nil
 }
 
-func (s *StockService) UpdateStock(stock model.Stock, id uint64) (model.Stock, error) {
+func (s *StockService) UpdateStock(stock model.Stock, id int) (model.Stock, error) {
 	exist := new(model.Stock)
 	result := s.db.First(&exist, id)
 
@@ -55,7 +55,7 @@ func (s *StockService) UpdateStock(stock model.Stock, id uint64) (model.Stock, e
 	return *exist, nil
 }
 
-func (s *StockService) DeleteById(id uint64) error {
+func (s *StockService) DeleteById(id int) error {
 	result := s.db.Delete(&model.Stock{}, id)
 	if result.Error != nil {
 		return result.Error
